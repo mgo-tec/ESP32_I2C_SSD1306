@@ -12,5 +12,5 @@ SizeUp_8x8_Font_DisplayOut	KEYWORD2
 SizeUp_8x16_Font_DisplayOut	KEYWORD2
 Font8x16_1line_DisplayOut	KEYWORD2
 Font8x16_1line_Page_DisplayOut	KEYWORD2
-Scroller_Font8x16_PageReplacet	KEYWORD2
+Scroller_Font8x16_PageReplace	KEYWORD2
 Font8x16pix_Rotation	KEYWORD2
