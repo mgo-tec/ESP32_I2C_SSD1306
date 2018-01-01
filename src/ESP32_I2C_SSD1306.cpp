@@ -1,6 +1,6 @@
 /*
   ESP32_I2C_SSD1306.cpp - for Arduino core for the ESP32 ( Use I2C library ).
-  Beta version 1.0
+  Beta version 1.01
   
 The MIT License (MIT)
 
@@ -237,19 +237,16 @@ void ESP32_I2C_SSD1306::SizeUp_8x8_Font_DisplayOut(uint8_t size, uint8_t txtMax,
     dot_cnt_v = dot_cnt_v + 8/size;
   }
 }
-
 //********* OLED 16x16フォントサイズアップ ********************
 void ESP32_I2C_SSD1306::SizeUp_8x16_Font_DisplayOut(uint8_t size, uint8_t txtMax, uint8_t x0, uint8_t p0, uint8_t Fnt[][16]){
   //size must 2 or 4
   int i, n;
-  uint8_t b = 0;
   uint8_t fnt_cnv[txtMax][size][size][16] = {};
   int8_t FpageV = 0;
   uint8_t FpageH = 0;
   uint8_t shift_bit_cnt = 0;
   uint8_t byt_read_cnt = 0;
   uint8_t byt_write_cnt = 0;
-  //uint8_t set_x_max = x0 + (txtMax*size)*8 - 1;
   uint8_t set_x_max = 127;
   uint8_t page_max = size*2;
   uint8_t map_bit = 0b11000000; //case by size=2
@@ -265,13 +262,13 @@ void ESP32_I2C_SSD1306::SizeUp_8x16_Font_DisplayOut(uint8_t size, uint8_t txtMax
       }
 
       for(int8_t bit_read_cnt=7; bit_read_cnt>=0; bit_read_cnt--){
-        b = (Fnt[n][byt_read_cnt] >> bit_read_cnt) & 0x01; //bitRead
         if(shift_bit_cnt > 7){
           shift_bit_cnt = 0;
           FpageV++;
         }
 
-        if(b>0){ //bitWrite
+        if( Fnt[n][byt_read_cnt] & (0x01 << bit_read_cnt) ){ //bitRead
+          //bitWrite
           fnt_cnv[n][FpageH][FpageV][byt_write_cnt] = fnt_cnv[n][FpageH][FpageV][byt_write_cnt] | (map_bit >> shift_bit_cnt);
         }
         shift_bit_cnt = shift_bit_cnt + size;

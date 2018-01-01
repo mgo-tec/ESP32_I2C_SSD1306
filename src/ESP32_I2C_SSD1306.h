@@ -1,6 +1,6 @@
 /*
   ESP32_I2C_SSD1306.h - for Arduino core for the ESP32 ( Use I2C library ).
-  Beta version 1.0
+  Beta version 1.01
   
 The MIT License (MIT)
 
@@ -58,6 +58,7 @@ public:
   void Font_8x8_DisplayOut(int16_t Rotation, uint8_t Direction, uint8_t txtMax, uint8_t x0, uint8_t p0, uint8_t Fnt[][8]);
   void SizeUp_8x8_Font_DisplayOut(uint8_t size, uint8_t txtMax, uint8_t x0, uint8_t p0, uint8_t Fnt[][8]);
   void SizeUp_8x16_Font_DisplayOut(uint8_t size, uint8_t txtMax, uint8_t x0, uint8_t p0, uint8_t Fnt[][16]);
+void SizeUp_8x16_Font_DisplayOut2(uint8_t size, uint8_t txtMax, uint8_t x0, uint8_t p0, uint8_t Fnt[][16]);
 
   void Font8x16_1line_DisplayOut(uint8_t txtMax, uint8_t x0, uint8_t p0, uint8_t Fnt[][16]);
   void Font8x16_1line_DisplayOut(int16_t Rotation, uint8_t txtMax, uint8_t x0, uint8_t p0, uint8_t Fnt[][16]);
