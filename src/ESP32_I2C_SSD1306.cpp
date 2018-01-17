@@ -1,6 +1,6 @@
 /*
   ESP32_I2C_SSD1306.cpp - for Arduino core for the ESP32 ( Use I2C library ).
-  Beta version 1.01
+  Beta version 1.10
   
 The MIT License (MIT)
 
@@ -240,17 +240,22 @@ void ESP32_I2C_SSD1306::SizeUp_8x8_Font_DisplayOut(uint8_t size, uint8_t txtMax,
 //********* OLED 16x16フォントサイズアップ ********************
 void ESP32_I2C_SSD1306::SizeUp_8x16_Font_DisplayOut(uint8_t size, uint8_t txtMax, uint8_t x0, uint8_t p0, uint8_t Fnt[][16]){
   //size must 2 or 4
+  ESP32_I2C_SSD1306::SizeUp_8x16_Font_DisplayOut(size, size, txtMax, x0, p0, Fnt);
+}
+//********* OLED 16x16フォントサイズアップ ********************
+void ESP32_I2C_SSD1306::SizeUp_8x16_Font_DisplayOut(uint8_t H_size, uint8_t V_size, uint8_t txtMax, uint8_t x0, uint8_t p0, uint8_t Fnt[][16]){
+  //H_size & V_size must 1 or 2 or 4
   int i, n;
-  uint8_t fnt_cnv[txtMax][size][size][16] = {};
+  uint8_t fnt_cnv[txtMax][H_size][V_size][16] = {};
   int8_t FpageV = 0;
   uint8_t FpageH = 0;
   uint8_t shift_bit_cnt = 0;
   uint8_t byt_read_cnt = 0;
   uint8_t byt_write_cnt = 0;
   uint8_t set_x_max = 127;
-  uint8_t page_max = size*2;
+  uint8_t page_max = V_size*2;
   uint8_t map_bit = 0b11000000; //case by size=2
-  if(size == 4){
+  if(V_size == 4){
     map_bit = 0b11110000;
   }
 
@@ -259,6 +264,7 @@ void ESP32_I2C_SSD1306::SizeUp_8x16_Font_DisplayOut(uint8_t size, uint8_t txtMax
       if(byt_write_cnt > 15){
         byt_write_cnt = 0;
         FpageH++;
+        if(FpageH >= H_size) break;
       }
 
       for(int8_t bit_read_cnt=7; bit_read_cnt>=0; bit_read_cnt--){
@@ -271,37 +277,39 @@ void ESP32_I2C_SSD1306::SizeUp_8x16_Font_DisplayOut(uint8_t size, uint8_t txtMax
           //bitWrite
           fnt_cnv[n][FpageH][FpageV][byt_write_cnt] = fnt_cnv[n][FpageH][FpageV][byt_write_cnt] | (map_bit >> shift_bit_cnt);
         }
-        shift_bit_cnt = shift_bit_cnt + size;
+        shift_bit_cnt = shift_bit_cnt + V_size;
       }
 
       shift_bit_cnt = 0;
 
-      for(FpageV=0; FpageV<size; FpageV++){
-        for(i=1; i<size; i++){
-          fnt_cnv[n][FpageH][FpageV][byt_write_cnt+i] = fnt_cnv[n][FpageH][FpageV][byt_write_cnt];
+      for(FpageV=0; FpageV<V_size; FpageV++){
+        if(H_size > 1){
+          for(i=1; i<H_size; i++){
+            fnt_cnv[n][FpageH][FpageV][byt_write_cnt+i] = fnt_cnv[n][FpageH][FpageV][byt_write_cnt];
+          }
         }
       }
 
       FpageV = 0;
-      byt_write_cnt = byt_write_cnt + size;
+      byt_write_cnt = byt_write_cnt + H_size;
     }
 
     FpageH = 0;
     byt_write_cnt = 0;
   }
 
-  uint8_t Fpage_max = size-1;
+  uint8_t Fpage_max = V_size-1;
 
   FpageV = Fpage_max;
   for(i=0; i<page_max; i++){
     ESP32_I2C_SSD1306::Column_Page_Set(x0, set_x_max, p0+i);
-    if(i<size){
+    if(i<V_size){
       n=1; //奇数値8x16フォントpage割り当て
     }else{
       n=0; //偶数値8x16フォントpage割り当て
     }
     while(n<txtMax){
-      for(FpageH=0; FpageH<size; FpageH++){
+      for(FpageH=0; FpageH<H_size; FpageH++){
         Wire.beginTransmission(_Addres);
           Wire.write(0b01000000);
           Wire.write(fnt_cnv[n][FpageH][FpageV], 16);
@@ -373,6 +381,18 @@ void ESP32_I2C_SSD1306::Font8x16_1line_Page_DisplayOut(uint8_t txtMax, uint8_t x
         Wire.write(Fnt[i++], 16); //2byte連続出力。beginTransmissionとコントロールバイト含めて32byteしか連続出力できない
     Wire.endTransmission();
   }
+}
+//*********電光掲示板風スクロール関数 8x16 Page単位 16文字用********************
+boolean ESP32_I2C_SSD1306::Scroller_Font8x16_PageReplace(boolean *Scl_Reset, uint8_t txtMax, uint8_t num, uint8_t Zen_or_Han, uint8_t font_buf1[][16], uint8_t scl_buff1[][16]){
+  if(*Scl_Reset){
+    _scl_cnt2[num] = 0;
+    _Zen_or_Han_cnt2[num] = 0;
+    *Scl_Reset = false;
+    return false;
+  }
+  
+  return ESP32_I2C_SSD1306::Scroller_Font8x16_PageReplace(txtMax, num, Zen_or_Han, font_buf1, scl_buff1);
+
 }
 //*********電光掲示板風スクロール関数 8x16 Page単位 16文字用********************
 boolean ESP32_I2C_SSD1306::Scroller_Font8x16_PageReplace(uint8_t txtMax, uint8_t num, uint8_t Zen_or_Han, uint8_t font_buf1[][16], uint8_t scl_buff1[][16]){

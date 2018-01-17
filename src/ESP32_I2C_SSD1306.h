@@ -1,6 +1,6 @@
 /*
   ESP32_I2C_SSD1306.h - for Arduino core for the ESP32 ( Use I2C library ).
-  Beta version 1.01
+  Beta version 1.10
   
 The MIT License (MIT)
 
@@ -57,13 +57,15 @@ public:
   void Display_Clear_Page(uint8_t x0, uint8_t p0, uint8_t x1, uint8_t p1);
   void Font_8x8_DisplayOut(int16_t Rotation, uint8_t Direction, uint8_t txtMax, uint8_t x0, uint8_t p0, uint8_t Fnt[][8]);
   void SizeUp_8x8_Font_DisplayOut(uint8_t size, uint8_t txtMax, uint8_t x0, uint8_t p0, uint8_t Fnt[][8]);
+
   void SizeUp_8x16_Font_DisplayOut(uint8_t size, uint8_t txtMax, uint8_t x0, uint8_t p0, uint8_t Fnt[][16]);
-void SizeUp_8x16_Font_DisplayOut2(uint8_t size, uint8_t txtMax, uint8_t x0, uint8_t p0, uint8_t Fnt[][16]);
+  void SizeUp_8x16_Font_DisplayOut(uint8_t H_size, uint8_t V_size, uint8_t txtMax, uint8_t x0, uint8_t p0, uint8_t Fnt[][16]);
 
   void Font8x16_1line_DisplayOut(uint8_t txtMax, uint8_t x0, uint8_t p0, uint8_t Fnt[][16]);
   void Font8x16_1line_DisplayOut(int16_t Rotation, uint8_t txtMax, uint8_t x0, uint8_t p0, uint8_t Fnt[][16]);
   void Font8x16_1line_Page_DisplayOut(uint8_t txtMax, uint8_t x0, uint8_t p0, uint8_t Fnt[][16]);
 
+  boolean Scroller_Font8x16_PageReplace(boolean *Scl_Reset, uint8_t txtMax, uint8_t num, uint8_t Zen_or_Han, uint8_t font_buf1[][16], uint8_t scl_buff1[][16]);
   boolean Scroller_Font8x16_PageReplace(uint8_t txtMax, uint8_t num, uint8_t Zen_or_Han, uint8_t font_buf1[][16], uint8_t scl_buff1[][16]);
 
   void Font8x16pix_Rotation(int16_t Rotation, uint8_t Fnt[16], uint8_t p1_8pix[8], uint8_t p2_8pix[8]);
