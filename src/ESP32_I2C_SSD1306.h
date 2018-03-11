@@ -1,6 +1,6 @@
 /*
   ESP32_I2C_SSD1306.h - for Arduino core for the ESP32 ( Use I2C library ).
-  Beta version 1.10
+  Beta version 1.20
   
 The MIT License (MIT)
 
